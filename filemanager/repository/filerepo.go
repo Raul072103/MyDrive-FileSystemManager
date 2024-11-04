@@ -33,8 +33,17 @@ func (fr *FileRepo) CreateFile(path string) (err error) {
 
 // DeleteFile deletes a file at the specified path.
 func (fr *FileRepo) DeleteFile(path string) error {
-	err := os.Remove(path)
-	return err
+	fileExists, err := fileExists(path)
+	if err != nil {
+		return err
+	}
+
+	if fileExists {
+		err = os.Remove(path)
+		return err
+	} else {
+		return errors.New("tried to delete a file that doesn't exist")
+	}
 }
 
 // UpdateFile updates the contents of the file.
@@ -55,14 +64,22 @@ func (fr *FileRepo) UpdateFile(path string, content []byte, updateAt int64) (err
 	return err
 }
 
-// ReadFile reads the contents of the file at the given path and returns the bytes of that file.
-//
+// ReadFile reads the contents of the file, if it exists, at the given path and returns the content of that file.
 // TODO() handle bigger files.
 func (fr *FileRepo) ReadFile(path string) ([]byte, error) {
-	data, err := os.ReadFile(path)
+	fileExists, err := fileExists(path)
 	if err != nil {
 		return nil, err
 	}
 
-	return data, nil
+	if fileExists {
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return nil, err
+		}
+
+		return data, nil
+	} else {
+		return nil, errors.New("tried to read from a file that doesn't exist")
+	}
 }
