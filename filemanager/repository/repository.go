@@ -11,13 +11,3 @@ type FileManagerRepo interface {
 
 	ReadFile(path string) ([]byte, error)
 }
-
-//type DirectoryManagerRepo interface {
-//	CreateDirectory(path string) error
-//
-//	DeleteDirectory(path string) error
-//
-//	UpdateDirectory(path string, file os.File) error
-//
-//	ReadDirectoryFiles(path string) ([]string, error)
-//}
