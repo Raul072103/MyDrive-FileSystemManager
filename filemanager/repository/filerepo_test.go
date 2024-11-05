@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"bytes"
 	"errors"
 	"os"
 	"testing"
@@ -12,11 +13,9 @@ type testFile struct {
 	args      []any
 }
 
-const createTestsDirectoryPath = "C:\\Users\\raula\\Desktop\\facultate\\anul 3 sem 1\\Software Engineering\\Golang\\Learning\\MyDrive-FileSystemManager\\testfiles\\create_operations_tests"
-
 // TestFileRepo_CreateFile_TestingDirectory tests if the file is successfully created in that directory
 func TestFileRepo_CreateFile_TestingDirectory(t *testing.T) {
-	path := createTestsDirectoryPath + "\\create_test1.txt"
+	path := createTestsDirectory + "\\create_test1.txt"
 
 	err := FR.CreateFile(path)
 	if err != nil {
@@ -43,7 +42,7 @@ func TestFileRepo_CreateFile_PathInWrongFormat(t *testing.T) {
 
 // TestFileRepo_CreateFile_AlreadyExistingFile tests if an error is thrown when the file already exist
 func TestFileRepo_CreateFile_AlreadyExistingFile(t *testing.T) {
-	path := createTestsDirectoryPath + "\\create_test2.txt"
+	path := createTestsDirectory + "\\create_test2.txt"
 
 	err := FR.CreateFile(path)
 	if err == nil {
@@ -52,35 +51,93 @@ func TestFileRepo_CreateFile_AlreadyExistingFile(t *testing.T) {
 }
 
 func TestFileRepo_ReadFile_ReadsCorrectly(t *testing.T) {
+	path := readTestsDirectory + "\\read_test1.txt"
 
+	content, err := FR.ReadFile(path)
+	if err != nil {
+		t.Errorf("File %s couldn't be read!", path)
+	}
+
+	if !bytes.Equal(content, fileContentReadTest1) {
+		t.Errorf("File contents don't match!")
+	}
 }
 
 func TestFileRepo_ReadFile_FileDoesntExist(t *testing.T) {
+	path := readTestsDirectory + "\\nonexistent_file.txt"
 
+	_, err := FR.ReadFile(path)
+	if err == nil {
+		t.Errorf("Tried to read even if the file doesn't exist")
+	}
 }
 
-func TestFileRepo_ReadFile_NoPermissionsToAccessTheDirectory(t *testing.T) {
-
-}
-
-func TestFileRepo_ReadFile_NoPermissionsToRead(t *testing.T) {
-
-}
+// TODO(): tests for UNIX systems
+//func TestFileRepo_ReadFile_NoPermissionsToAccessTheDirectory(t *testing.T) {
+//	path := readTestsDirectory + "\\no_E_permissions" + "\\read_test2.txt"
+//
+//	_, err := FR.ReadFile(path)
+//	if err == nil {
+//		t.Errorf("Tried to access a file from a directory with no execute rights")
+//	}
+//}
+//
+//func TestFileRepo_ReadFile_NoPermissionsToRead(t *testing.T) {
+//	path := readTestsDirectory + "\\no_R_permissions" + "\\read_test3.txt"
+//
+//	_, err := FR.ReadFile(path)
+//	if err == nil {
+//		t.Errorf("Tried to access a file from a directory with no read rights")
+//	}
+//}
 
 func TestFileRepo_DeleteFile_DeletesCorrectly(t *testing.T) {
+	path := deleteTestsDirectory + "\\delete_test1.txt"
 
+	err := FR.DeleteFile(path)
+	if err != nil {
+		t.Errorf("Failed to delete file!")
+	}
 }
 
 func TestFileRepo_DeleteFile_FileDoesntExist(t *testing.T) {
+	path := deleteTestsDirectory + "\\delete_nonexistent.txt"
 
+	err := FR.DeleteFile(path)
+	if err == nil {
+		t.Errorf("Tried to delete non-existent file!")
+	}
 }
 
-func TestFileRepo_DeleteFile_NoPermissionsToAccessTheDirectory(t *testing.T) {
+// TODO(): tests for UNIX systems
+//func TestFileRepo_DeleteFile_NoPermissionsToAccessTheDirectory(t *testing.T) {}
 
+const updateContentSize = 100
+
+type updateContentOffset struct {
+	Content []byte
+	Offset  int64
+}
+
+var updatesCorrectlyTestCases = []updateContentOffset{
+	{generateRandomByteArray(updateContentSize), 0},
+	{generateRandomByteArray(updateContentSize), 1000},
+	{generateRandomByteArray(updateContentSize), 2000},
+	{generateRandomByteArray(updateContentSize), 10000},
 }
 
 func TestFileRepo_UpdateFile_UpdatesCorrectly(t *testing.T) {
+	path := updateTestsDirectory + "\\update_test1.txt"
 
+	for _, updateTestCase := range updatesCorrectlyTestCases {
+		content := updateTestCase.Content
+		offset := updateTestCase.Offset
+
+		err := FR.UpdateFile(path, content, offset)
+		if err == nil {
+			t.Errorf("Tried to delete non-existent file!")
+		}
+	}
 }
 
 func TestFileRepo_UpdateFile_OffsetBiggerThanFileSize(t *testing.T) {
@@ -95,9 +152,8 @@ func TestFileRepo_UpdateFile_FileDoesntExist(t *testing.T) {
 
 }
 
-func TestFileRepo_UpdateFile_NoPermissionsToWrite(t *testing.T) {
-
-}
+// TODO(): tests for UNIX systems
+//func TestFileRepo_UpdateFile_NoPermissionsToWrite(t *testing.T) {}
 
 func testIfFileExists(path string) (err error) {
 	file, err := os.Open(path)
