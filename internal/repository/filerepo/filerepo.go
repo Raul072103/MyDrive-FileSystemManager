@@ -1,6 +1,7 @@
-package repository
+package filerepo
 
 import (
+	"MyDrive-FileSystemManager/internal/utils"
 	"errors"
 	"os"
 )
@@ -15,7 +16,7 @@ func NewFileRepo() *FileRepo {
 // CreateFile creates a file at the specified path.
 // It doesn't create a new file if there is already an existing one.
 func (fr *FileRepo) CreateFile(path string) (err error) {
-	fileExists, err := fileExists(path)
+	fileExists, err := utils.FileExists(path)
 	if fileExists {
 		return errors.New("file already exists")
 	}
@@ -33,7 +34,7 @@ func (fr *FileRepo) CreateFile(path string) (err error) {
 
 // DeleteFile deletes a file at the specified path.
 func (fr *FileRepo) DeleteFile(path string) error {
-	fileExists, err := fileExists(path)
+	fileExists, err := utils.FileExists(path)
 	if err != nil {
 		return err
 	}
@@ -67,7 +68,7 @@ func (fr *FileRepo) UpdateFile(path string, content []byte, updateAt int64) (err
 // ReadFile reads the contents of the file, if it exists, at the given path and returns the content of that file.
 // TODO() handle bigger files.
 func (fr *FileRepo) ReadFile(path string) ([]byte, error) {
-	fileExists, err := fileExists(path)
+	fileExists, err := utils.FileExists(path)
 	if err != nil {
 		return nil, err
 	}

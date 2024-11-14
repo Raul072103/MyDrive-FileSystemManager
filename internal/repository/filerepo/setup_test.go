@@ -1,6 +1,7 @@
-package repository
+package filerepo
 
 import (
+	"MyDrive-FileSystemManager/internal/utils"
 	"crypto/rand"
 	"os"
 	"testing"
@@ -151,7 +152,7 @@ func createTestFile(path string, content []byte) {
 }
 
 func deleteTestFile(path string) {
-	fileExists, err := fileExists(path)
+	fileExists, err := utils.fileExists(path)
 	if err != nil {
 		panic("SETUP OF THE TESTS FAILED: \n" + err.Error())
 	}
