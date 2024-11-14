@@ -1,0 +1,216 @@
+@startuml
+|User|
+start
+:Login with credentials;
+:Request file list;
+
+|Frontend (React)|
+if (User authenticated?) then (yes)
+    :Display user dashboard;
+    :Send request to view files;
+else (no)
+    :Show error message;
+    stop
+endif
+
+|Backend API (Kotlin Spring)|
+:Receive file list request;
+:Authenticate user session (JWT);
+:Fetch file metadata;
+
+|File Management System (Golang)|
+:Retrieve file metadata from database;
+
+|Database (PostgreSQL)|
+:Query file metadata;
+:return "file metadata";
+
+|File Management System (Golang)|
+:return "file metadata" to backend;
+
+|Backend API (Kotlin Spring)|
+:return "file list" to frontend;
+
+|Frontend (React)|
+:Display file list to user;
+
+|User|
+if (Perform CRUD operation?) then (yes)
+    :Select operation (Upload, Download, Update, Delete);
+    if (Operation is Upload?) then (yes)
+        :Upload new file;
+        
+        |Frontend (React)|
+        :Send file data to backend;
+        
+        |Backend API (Kotlin Spring)|
+        :Store file data and metadata;
+        
+        |File Management System (Golang)|
+        :Save file content;
+        
+        |Database (PostgreSQL)|
+        :Store file metadata;
+        :Confirm storage success;
+        
+        |File Management System (Golang)|
+        :Return success to backend;
+        
+        |Backend API (Kotlin Spring)|
+        :Return upload success;
+    else if (Operation is Download?) then (yes)
+        :Request file download;
+        
+        |Frontend (React)|
+        :Request file from backend;
+        
+        |Backend API (Kotlin Spring)|
+        :Retrieve file content;
+        
+        |File Management System (Golang)|
+        :Retrieve file content from storage;
+        :Return file content to backend;
+        
+        |Backend API (Kotlin Spring)|
+        :Return file to frontend;
+        
+        |Frontend (React)|
+        :Initiate file download;
+    else if (Operation is Update?) then (yes)
+        :Request file update;
+        
+        |Frontend (React)|
+        :Send updated file data;
+        
+        |Backend API (Kotlin Spring)|
+        :Update file content and metadata;
+        
+        |File Management System (Golang)|
+        :Update file content in storage;
+        
+        |Database (PostgreSQL)|
+        :Update file metadata;
+        :Return update confirmation;
+        
+        |Backend API (Kotlin Spring)|
+        :Return update success to frontend;
+        
+        |Frontend (React)|
+        :Show update success;
+    else (Delete)
+        :Request file deletion;
+        
+        |Frontend (React)|
+        :Send delete request to backend;
+        
+        |Backend API (Kotlin Spring)|
+        :Delete file content and metadata;
+        
+        |File Management System (Golang)|
+        :Delete file content from storage;
+        
+        |Database (PostgreSQL)|
+        :Delete file metadata;
+        :Return deletion confirmation;
+        
+        |Backend API (Kotlin Spring)|
+        :Return delete success to frontend;
+        
+        |Frontend (React)|
+        :Show deletion success;
+    endif
+else (no)
+    :No action taken;
+endif
+
+|User|
+stop
+@enduml
+
+@startuml
+|User|
+:Select operation (Upload, Download, Update, Delete);
+
+if (Operation is Upload?) then (yes)
+    :Upload new file;
+    
+    |Frontend (React)|
+    :Send file data to backend;
+    
+    |Backend API (Kotlin Spring)|
+    :Store file data and metadata;
+    
+    |File Management System (Golang)|
+    :Save file content;
+    
+    |Database (PostgreSQL)|
+    :Store file metadata;
+    :Confirm storage success;
+    
+    |File Management System (Golang)|
+    :Return success to backend;
+    
+    |Backend API (Kotlin Spring)|
+    :Return upload success;
+else if (Operation is Download?) then (yes)
+    :Request file download;
+    
+    |Frontend (React)|
+    :Request file from backend;
+    
+    |Backend API (Kotlin Spring)|
+    :Retrieve file content;
+    
+    |File Management System (Golang)|
+    :Retrieve file content from storage;
+    :Return file content to backend;
+    
+    |Backend API (Kotlin Spring)|
+    :Return file to frontend;
+    
+    |Frontend (React)|
+    :Initiate file download;
+else if (Operation is Update?) then (yes)
+    :Request file update;
+    
+    |Frontend (React)|
+    :Send updated file data;
+    
+    |Backend API (Kotlin Spring)|
+    :Update file content and metadata;
+    
+    |File Management System (Golang)|
+    :Update file content in storage;
+    
+    |Database (PostgreSQL)|
+    :Update file metadata;
+    :Return update confirmation;
+    
+    |Backend API (Kotlin Spring)|
+    :Return update success to frontend;
+    
+    |Frontend (React)|
+    :Show update success;
+else (Delete)
+    :Request file deletion;
+    
+    |Frontend (React)|
+    :Send delete request to backend;
+    
+    |Backend API (Kotlin Spring)|
+    :Delete file content and metadata;
+    
+    |File Management System (Golang)|
+    :Delete file content from storage;
+    
+    |Database (PostgreSQL)|
+    :Delete file metadata;
+    :Return deletion confirmation;
+    
+    |Backend API (Kotlin Spring)|
+    :Return delete success to frontend;
+    
+    |Frontend (React)|
+    :Show deletion success;
+endif
+@enduml

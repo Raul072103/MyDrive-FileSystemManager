@@ -1,0 +1,67 @@
+@startuml
+actor User
+participant "Frontend (React)" as Frontend
+participant "Backend API (Kotlin Spring)" as Backend
+participant "File Management System (Golang)" as FileSystem
+participant "Database (PostgreSQL)" as DB
+
+== User Login and Authentication ==
+User -> Frontend : Enter username and password
+Frontend -> Backend : Send credentials (username, password)
+Backend -> DB : Check credentials in the database
+DB --> Backend : Return authentication result
+Backend -> Backend : Generate JWT token
+Backend --> Frontend : Send JWT token
+Frontend -> User : Show user dashboard with file data
+
+== Viewing Existing Files ==
+User -> Frontend : Request to view files
+Frontend -> Backend : Request files metadata
+Backend -> FileSystem : Fetch files metadata
+FileSystem -> DB : Query file metadata
+DB --> FileSystem : Return file metadata
+FileSystem --> Backend : Return file metadata
+Backend --> Frontend : Send file metadata to display
+Frontend -> User : Display list of files
+
+== CRUD Operations ==
+=== Create File ===
+User -> Frontend : Upload new file
+Frontend -> Backend : Send file data (file content, metadata)
+Backend -> FileSystem : Store file content
+FileSystem -> DB : Store file metadata
+DB --> FileSystem : Confirm file metadata storage
+FileSystem --> Backend : Return success response
+Backend --> Frontend : Confirm file upload
+Frontend -> User : Show success message
+
+=== Read File ===
+User -> Frontend : Request to download a file
+Frontend -> Backend : Request file by ID
+Backend -> FileSystem : Retrieve file content by ID
+FileSystem -> DB : Query file metadata by ID
+DB --> FileSystem : Return file metadata
+FileSystem --> Backend : Return file content
+Backend --> Frontend : Send file content
+Frontend -> User : Download file
+
+=== Update File ===
+User -> Frontend : Update file metadata or content
+Frontend -> Backend : Send updated file data
+Backend -> FileSystem : Update file content or metadata
+FileSystem -> DB : Update file metadata in database
+DB --> FileSystem : Confirm file update
+FileSystem --> Backend : Return success response
+Backend --> Frontend : Confirm file update
+Frontend -> User : Show success message
+
+=== Delete File ===
+User -> Frontend : Request to delete a file
+Frontend -> Backend : Send request to delete file by ID
+Backend -> FileSystem : Delete file content by ID
+FileSystem -> DB : Delete file metadata from database
+DB --> FileSystem : Confirm file deletion
+FileSystem --> Backend : Return success response
+Backend --> Frontend : Confirm file deletion
+Frontend -> User : Show success message
+@enduml
