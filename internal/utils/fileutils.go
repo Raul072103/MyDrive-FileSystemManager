@@ -1,8 +1,8 @@
-package repository
+package utils
 
 import "os"
 
-func fileExists(path string) (bool, error) {
+func FileExists(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if err == nil {
 		return true, nil

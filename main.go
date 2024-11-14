@@ -1,18 +1,18 @@
 package main
 
 import (
-	"MyDrive-FileSystemManager/filemanager/repository"
+	"MyDrive-FileSystemManager/internal/repository/filerepo"
 	"fmt"
 )
 
-const testPath = "filemanager/repository/data.txt"
+const testPath = "filerepo/repository/data.txt"
 
 func main() {
 	fileRepoMain()
 }
 
 func fileRepoMain() {
-	var fmRepo = repository.FileRepo{}
+	var fmRepo = filerepo.FileRepo{}
 
 	content, err := fmRepo.ReadFile(testPath)
 
