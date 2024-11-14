@@ -9,7 +9,7 @@ import (
 type FileRepo struct {
 }
 
-func NewFileRepo() *FileRepo {
+func New() *FileRepo {
 	return &FileRepo{}
 }
 
@@ -33,7 +33,7 @@ func (fr *FileRepo) CreateFile(path string) (err error) {
 }
 
 // DeleteFile deletes a file at the specified path.
-func (fr *FileRepo) DeleteFile(path string) error {
+func (fr *FileRepo) DeleteFile(path string) (err error) {
 	fileExists, err := utils.FileExists(path)
 	if err != nil {
 		return err

@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-var FR = NewFileRepo()
+var FR = New()
 
 func TestMain(m *testing.M) {
 	// Setup code here (runs before all tests)
